@@ -225,7 +225,7 @@ train_predictor(uint32_t pc, uint8_t outcome)
 
       if (outcome){
         // Global Prediction..
-        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+        if ((globalPrediction & (1 << 1)) != (localPrediction & (1 << 1))){
           // check who predicted..
           if ((globalPrediction > 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
             selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
@@ -239,7 +239,7 @@ train_predictor(uint32_t pc, uint8_t outcome)
       }
       else{
         // Local Prediction..
-        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+        if ((globalPrediction & (1 << 1)) != (localPrediction & (1 << 1))){
           // check who predicted..
           if ((globalPrediction <= 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
             selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
@@ -265,7 +265,7 @@ train_predictor(uint32_t pc, uint8_t outcome)
       int globalPrediction = globalPredictionTable[indexGlobal];
       if (outcome){
         // Global Prediction..
-        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+        if ((globalPrediction & (1 << 1)) != (localPrediction & (1 << 1))){
           // check who predicted..
           if ((globalPrediction > 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
             selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
@@ -279,7 +279,7 @@ train_predictor(uint32_t pc, uint8_t outcome)
       }
       else{
         // Local Prediction..
-        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+        if ((globalPrediction & (1 << 1)) != (localPrediction & (1 << 1))){
           // check who predicted..
           if ((globalPrediction <= 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
             selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
