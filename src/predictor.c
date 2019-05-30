@@ -241,9 +241,9 @@ train_predictor(uint32_t pc, uint8_t outcome)
         // Local Prediction..
         if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
           // check who predicted..
-          if ((globalPrediction < 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
+          if ((globalPrediction <= 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
             selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
-          else if ((localPrediction < 1 ) && (selector[globalHistory & ((1 << ghistoryBits) - 1)] !=0))
+          else if ((localPrediction <= 1 ) && (selector[globalHistory & ((1 << ghistoryBits) - 1)] !=0))
             selector[globalHistory & ((1 << ghistoryBits) - 1)]--;
         }
         if (localPrediction != 0)
@@ -257,6 +257,45 @@ train_predictor(uint32_t pc, uint8_t outcome)
       break;    
     }
     case CUSTOM:
+    {
+      int indexLocal = localHistoryTable[(int)(pc & ((1 << pcIndexBits) - 1))] & ((1 << lhistoryBits) - 1);
+
+      int localPrediction = localPredictionTable[indexLocal];
+      int indexGlobal = (int)((pc & ((1 << ghistoryBits) - 1)) ^ (globalHistory & ((1 << ghistoryBits) - 1)));
+      int globalPrediction = globalPredictionTable[indexGlobal];
+      if (outcome){
+        // Global Prediction..
+        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+          // check who predicted..
+          if ((globalPrediction > 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
+            selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
+          else if ((localPrediction > 1 ) && (selector[globalHistory & ((1 << ghistoryBits) - 1)] !=0))
+            selector[globalHistory & ((1 << ghistoryBits) - 1)]--;
+        }
+        if (localPrediction != 3)
+          ++localPredictionTable[indexLocal];
+        if (globalPrediction != 3)
+          ++globalPredictionTable[indexGlobal];
+      }
+      else{
+        // Local Prediction..
+        if ((localPrediction >= 2) && (globalPrediction <=1) || (localPrediction <=1 && globalPrediction >=2)){
+          // check who predicted..
+          if ((globalPrediction <= 1) && (selector[globalHistory & ((1 << ghistoryBits) - 1)]) != 3)
+            selector[globalHistory & ((1 << ghistoryBits) - 1)]++;
+          else if ((localPrediction <= 1 ) && (selector[globalHistory & ((1 << ghistoryBits) - 1)] !=0))
+            selector[globalHistory & ((1 << ghistoryBits) - 1)]--;
+        }
+        if (localPrediction != 0)
+          --localPredictionTable[indexLocal];
+        if (globalPrediction != 0)
+          --globalPredictionTable[indexGlobal];
+      }
+      globalHistory = (globalHistory << 1) | outcome; 
+      // Update localHistoryTable
+      localHistoryTable[pc & ((1 << pcIndexBits) - 1)] = (localHistoryTable[pc & ((1 << pcIndexBits) - 1)] << 1) | outcome; 
+      break;
+    }
     default:
       break;
   }  
@@ -269,6 +308,7 @@ void delete_predictor(){
     case GSHARE : 
       free(globalPredictionTable);
       return;
+    case CUSTOM:
     case TOURNAMENT :
       free(globalPredictionTable);
       free(localPredictionTable);
