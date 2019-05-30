@@ -12,9 +12,9 @@
 //
 // TODO:Student Information
 //
-const char *studentName = "NAME";
-const char *studentID   = "PID";
-const char *email       = "EMAIL";
+const char *studentName = "MridulKavidayal;PiyushTayal";
+const char *studentID   = "A53283690;A53285621";
+const char *email       = "mkaviday;ptayal";
 
 //------------------------------------//
 //      Predictor Configuration       //
@@ -30,11 +30,11 @@ int pcIndexBits;  // Number of bits used for PC index
 int bpType;       // Branch Prediction Type
 int verbose;
 
-unsigned int *globalPredictionTable;
-unsigned int *localPredictionTable;
-unsigned int *localHistoryTable;
-unsigned int *selector;
-unsigned int globalHistory;
+uint8_t *globalPredictionTable;
+uint8_t *localPredictionTable;
+uint8_t *selector;
+uint32_t *localHistoryTable;
+uint32_t globalHistory;
 
 //------------------------------------//
 //      Predictor Data Structures     //
@@ -62,7 +62,7 @@ init_predictor()
       return;
     case GSHARE : 
     {
-      globalPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
+      globalPredictionTable = (uint8_t*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(uint8_t));
       
       // Initialize all to one..
       int len = (int)pow(2.0,(double)ghistoryBits);
@@ -73,10 +73,10 @@ init_predictor()
     }
     case TOURNAMENT :
     {
-      globalPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
-      localPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)lhistoryBits)*sizeof(unsigned int));
-      localHistoryTable = (unsigned int*)malloc((int)pow(2.0,(double)pcIndexBits)*sizeof(unsigned int));
-      selector = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
+      globalPredictionTable = (uint8_t*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(uint8_t));
+      localPredictionTable = (uint8_t*)malloc((int)pow(2.0,(double)lhistoryBits)*sizeof(uint8_t));
+      localHistoryTable = (uint32_t*)malloc((int)pow(2.0,(double)pcIndexBits)*sizeof(uint32_t));
+      selector = (uint8_t*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(uint8_t));
       // initialize all to 1..
       int len = (int)pow(2.0,(double)ghistoryBits);
       for (int ii = 0; ii < len; ++ii){
@@ -96,10 +96,10 @@ init_predictor()
     }
     case CUSTOM:
     {
-      globalPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
-      localPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)lhistoryBits)*sizeof(unsigned int));
-      localHistoryTable = (unsigned int*)malloc((int)pow(2.0,(double)pcIndexBits)*sizeof(unsigned int));
-      selector = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
+      globalPredictionTable = (uint8_t*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(uint8_t));
+      localPredictionTable = (uint8_t*)malloc((int)pow(2.0,(double)lhistoryBits)*sizeof(uint8_t));
+      localHistoryTable = (uint32_t*)malloc((int)pow(2.0,(double)pcIndexBits)*sizeof(uint32_t));
+      selector = (uint8_t*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(uint8_t));
       // initialize all to 1..
       int len = (int)pow(2.0,(double)ghistoryBits);
       for (int ii = 0; ii < len; ++ii){
