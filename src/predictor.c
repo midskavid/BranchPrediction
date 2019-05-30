@@ -90,7 +90,7 @@ init_predictor()
 
       len = (int)pow(2.0,(double)pcIndexBits);
       for (int ii = 0; ii < len; ++ii)
-        localHistoryTable[ii] = 1;
+        localHistoryTable[ii] = 0;
       globalHistory = 0;
       return;
     }
@@ -113,7 +113,7 @@ init_predictor()
 
       len = (int)pow(2.0,(double)pcIndexBits);
       for (int ii = 0; ii < len; ++ii)
-        localHistoryTable[ii] = 1;
+        localHistoryTable[ii] = 0;
       globalHistory = 0;
       return;      
     }
