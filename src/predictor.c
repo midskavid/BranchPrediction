@@ -94,6 +94,29 @@ init_predictor()
       globalHistory = 0;
       return;
     }
+    case CUSTOM:
+    {
+      globalPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
+      localPredictionTable = (unsigned int*)malloc((int)pow(2.0,(double)lhistoryBits)*sizeof(unsigned int));
+      localHistoryTable = (unsigned int*)malloc((int)pow(2.0,(double)pcIndexBits)*sizeof(unsigned int));
+      selector = (unsigned int*)malloc((int)pow(2.0,(double)ghistoryBits)*sizeof(unsigned int));
+      // initialize all to 1..
+      int len = (int)pow(2.0,(double)ghistoryBits);
+      for (int ii = 0; ii < len; ++ii){
+        globalPredictionTable[ii] = 1;
+        selector[ii] = 2; // Check what happens with other values!!!
+      }
+
+      len = (int)pow(2.0,(double)lhistoryBits);
+      for (int ii = 0; ii < len; ++ii)
+        localPredictionTable[ii] = 1;
+
+      len = (int)pow(2.0,(double)pcIndexBits);
+      for (int ii = 0; ii < len; ++ii)
+        localHistoryTable[ii] = 1;
+      globalHistory = 0;
+      return;      
+    }
   }
 }
 
@@ -140,6 +163,21 @@ make_prediction(uint32_t pc)
       break;
     }
     case CUSTOM:
+    {
+      int indexTable = localHistoryTable[pc & ((1 << pcIndexBits) - 1)] & ((1 << lhistoryBits) - 1);
+      int localPrediction = localPredictionTable[indexTable];
+      indexTable = (int)((pc & ((1 << ghistoryBits) - 1)) ^ (globalHistory & ((1 << ghistoryBits) - 1)));
+      int globalPrediction = globalPredictionTable[indexTable];
+      if ((selector[globalHistory & ((1 << ghistoryBits) - 1)] & (1 << 1)) >> 1){
+        // Global Prediction..
+        return ((globalPrediction & (1 << 1)) >> 1) ? TAKEN : NOTTAKEN;
+      }
+      else{
+        // Local Prediction..
+        return ((localPrediction & (1 << 1)) >> 1) ? TAKEN : NOTTAKEN;
+      }
+      break;
+    }
     default:
       break;
   }
